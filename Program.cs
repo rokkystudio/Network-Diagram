@@ -12,12 +12,18 @@ namespace NetworkDiagram
         [STAThread]
         static void Main()
         {
-            Mutex mutex = new Mutex(true, "ROKKY_STUDIO_NETWORK_DIAGRAM_MUTEX");
-            if (mutex.WaitOne(TimeSpan.Zero, true)) {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainForm());
-                mutex.ReleaseMutex();
+            using (Mutex mutex = new Mutex(true, "ROKKY_STUDIO_NETWORK_DIAGRAM_MUTEX", out bool createdNew)) {
+                if (createdNew) {
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+
+                    try {
+                        Application.Run(new MainForm());
+                    }
+                    finally {
+                        mutex.ReleaseMutex();
+                    }
+                }
             }
         }
     }

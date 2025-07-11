@@ -61,7 +61,7 @@ namespace NetworkDiagram
             // mSpeedTimer
             // 
             this.mSpeedTimer.Enabled = true;
-            this.mSpeedTimer.Interval = 500;
+            this.mSpeedTimer.Interval = 250;
             this.mSpeedTimer.Tick += new System.EventHandler(this.SpeedTimer_Tick);
             // 
             // mAdaptersTimer
@@ -85,33 +85,33 @@ namespace NetworkDiagram
             this.NotifyMenuItemReset,
             this.NotifyMenuItemExit});
             this.mNotifyMenu.Name = "NotifyMenu";
-            this.mNotifyMenu.Size = new System.Drawing.Size(181, 114);
+            this.mNotifyMenu.Size = new System.Drawing.Size(117, 92);
             // 
             // NotifyMenuItemOpen
             // 
             this.NotifyMenuItemOpen.Name = "NotifyMenuItemOpen";
-            this.NotifyMenuItemOpen.Size = new System.Drawing.Size(180, 22);
+            this.NotifyMenuItemOpen.Size = new System.Drawing.Size(116, 22);
             this.NotifyMenuItemOpen.Text = "Open";
             this.NotifyMenuItemOpen.Click += new System.EventHandler(this.NotifyMenuItemOpen_Click);
             // 
             // NotifyMenuItemSettings
             // 
             this.NotifyMenuItemSettings.Name = "NotifyMenuItemSettings";
-            this.NotifyMenuItemSettings.Size = new System.Drawing.Size(180, 22);
+            this.NotifyMenuItemSettings.Size = new System.Drawing.Size(116, 22);
             this.NotifyMenuItemSettings.Text = "Settings";
             this.NotifyMenuItemSettings.Click += new System.EventHandler(this.NotifyMenuItemSettings_Click);
             // 
             // NotifyMenuItemReset
             // 
             this.NotifyMenuItemReset.Name = "NotifyMenuItemReset";
-            this.NotifyMenuItemReset.Size = new System.Drawing.Size(180, 22);
+            this.NotifyMenuItemReset.Size = new System.Drawing.Size(116, 22);
             this.NotifyMenuItemReset.Text = "Reset";
             this.NotifyMenuItemReset.Click += new System.EventHandler(this.NotifyMenuItemReset_Click);
             // 
             // NotifyMenuItemExit
             // 
             this.NotifyMenuItemExit.Name = "NotifyMenuItemExit";
-            this.NotifyMenuItemExit.Size = new System.Drawing.Size(180, 22);
+            this.NotifyMenuItemExit.Size = new System.Drawing.Size(116, 22);
             this.NotifyMenuItemExit.Text = "Exit";
             this.NotifyMenuItemExit.Click += new System.EventHandler(this.NotifyMenuItemExit_Click);
             // 
@@ -228,11 +228,11 @@ namespace NetworkDiagram
             this.mPanelBottom.Size = new System.Drawing.Size(308, 100);
             this.mPanelBottom.TabIndex = 8;
             // 
-            // SpeedDiagram
+            // mDiagramBox
             // 
             this.mDiagramBox.BackColor = System.Drawing.Color.White;
             this.mDiagramBox.Location = new System.Drawing.Point(14, 9);
-            this.mDiagramBox.Name = "SpeedDiagram";
+            this.mDiagramBox.Name = "mDiagramBox";
             this.mDiagramBox.Size = new System.Drawing.Size(280, 83);
             this.mDiagramBox.TabIndex = 8;
             this.mDiagramBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.SpeedDiagram_MouseDoubleClick);

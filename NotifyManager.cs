@@ -11,11 +11,14 @@ using System.Windows.Forms;
 
 namespace NetworkDiagram
 {
+    // Менеджер значка в трее: отображает иконки сети в зависимости от активности.
     public class NotifyManager
     {
+        // Удаляет дескриптор иконки из user32.dll (GDI очистка)
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        extern static bool DestroyIcon(IntPtr handle);
+        private static extern bool DestroyIcon(IntPtr handle);
 
+        // Типы иконок
         public const int STATIC_ICON   = 0;
         public const int DARK_ARROWS   = 1;
         public const int BIG_ARROWS    = 2;
@@ -28,23 +31,27 @@ namespace NetworkDiagram
         private NotifyIcon mNotifyIcon;
         private bool mStaticMode = true;
 
+        // Конструктор. Передаётся NotifyIcon, с которым будем работать.
         public NotifyManager(NotifyIcon icon) {
-            mResourceManager = new ResourceManager(typeof(Properties.Resources));
+            mResourceManager = Properties.Resources.ResourceManager;
             mNotifyIcon = icon;
         }
 
+        // Отображает иконку в трее в зависимости от стиля и активности.
         public void DrawIcon(int style, int sent, int received)
         {
-            if (style < STATIC_ICON && style > PROGRESS_ICON) style = DARK_ARROWS;
+            if (style < STATIC_ICON || style > PROGRESS_ICON) {
+                style = DARK_ARROWS;
+            }
 
-            if (style == STATIC_ICON)
-            {
+            if (style == STATIC_ICON) {
                 if (!mStaticMode) {
                     DrawStaticIcon();
                     mStaticMode = true;
                 }
                 return;
             }
+
             mStaticMode = false;
 
             if (style == PROGRESS_ICON) {
@@ -55,80 +62,104 @@ namespace NetworkDiagram
             DrawArrowsIcon(style, sent != 0, received != 0);
         }
 
+        // Отображает статичную иконку (например, при простое).
         private void DrawStaticIcon()
         {
             if (mNotifyIcon == null) return;
+
             Bitmap bitmap = (Bitmap) mResourceManager.GetObject("notify4_1");
-            DrawBitmap(bitmap);
+            if (bitmap != null) DrawBitmap(bitmap);
         }
 
+        // Отображает стрелки при активности (отправка/приём).
         private void DrawArrowsIcon(int style, bool sent, bool received)
         {
             if (mNotifyIcon == null) return;
 
             int id = GetID(sent, received);
             String name = "notify" + style + "_" + id;
+
             Bitmap bitmap = (Bitmap) mResourceManager.GetObject(name);
-            if (bitmap == null) return;
+            if (bitmap == null) {
+                System.Diagnostics.Debug.WriteLine($"[DrawArrowsIcon] Resource '{name}' not found.");
+                return;
+            }
 
             DrawBitmap(bitmap);
         }
 
+        // Отображает иконку-прогресс (уровень активности как заливка).
         private void DrawProgressIcon(int sent, int received)
         {
             if (mNotifyIcon == null) return;
 
-            var resources = new ResourceManager(typeof(Properties.Resources));
-            Bitmap bitmap = (Bitmap)resources.GetObject("notify1_1");
+            Bitmap bitmap = (Bitmap)mResourceManager.GetObject("notify1_1");
             if (bitmap == null) return;
 
-            Bitmap bfull = (Bitmap)resources.GetObject("notify1_4");
-            if (bfull == null) return;
-
-            Graphics graphics = Graphics.FromImage(bitmap);
-
-            // Draw sent arrow
-            int height = (int)(16 * sent);
-            if (height > 0)
-            {
-                Rectangle rect = new Rectangle(0, 0, 8, height);
-                PixelFormat format = bfull.PixelFormat;
-                Bitmap clone = bfull.Clone(rect, format);
-                graphics.DrawImage(clone, 0, 0);
-                clone.Dispose();
+            Bitmap bfull = (Bitmap)mResourceManager.GetObject("notify1_4");
+            if (bfull == null) {
+                bitmap.Dispose();
+                return;
             }
 
-            // Draw received arrow
-            height = (int)(16 * received);
-            if (height > 0)
-            {
-                Rectangle rect = new Rectangle(8, 0, 8, height);
-                PixelFormat format = bfull.PixelFormat;
-                Bitmap clone = bfull.Clone(rect, format);
-                graphics.DrawImage(clone, 8, 0);
-                clone.Dispose();
+            try {
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    // Clamp значения до 1.0f
+                    float clampedSent = Math.Min(sent / 1f, 1f);
+                    float clampedReceived = Math.Min(received / 1f, 1f);
+
+                    // Draw sent arrow
+                    int height = (int)(16 * clampedSent);
+                    if (height > 0) {
+                        Rectangle rect = new Rectangle(0, 0, 8, height);
+                        using (Bitmap clone = bfull.Clone(rect, bfull.PixelFormat)) {
+                            graphics.DrawImage(clone, 0, 0);
+                        }
+                    }
+
+                    // Draw received arrow
+                    height = (int)(16 * clampedReceived);
+                    if (height > 0) {
+                        Rectangle rect = new Rectangle(8, 0, 8, height);
+                        using (Bitmap clone = bfull.Clone(rect, bfull.PixelFormat)) {
+                            graphics.DrawImage(clone, 8, 0);
+                        }
+                    }
+                }
+
+                DrawBitmap(bitmap);
             }
-
-            graphics.Dispose();
-            bfull.Dispose();
-
-            DrawBitmap(bitmap);
+            finally {
+                bfull.Dispose();
+                bitmap.Dispose();
+            }
         }
 
+        // Устанавливает bitmap как иконку в NotifyIcon.
         private void DrawBitmap(Bitmap bitmap)
         {
-            if (mNotifyIcon == null) return;
-            DestroyIcon(mNotifyIcon.Icon.Handle);
+            if (mNotifyIcon == null || bitmap == null) return;
 
-            Icon icon = Icon.FromHandle(bitmap.GetHicon());
-            if (icon != null) mNotifyIcon.Icon = icon;
+            // Получаем HICON из Bitmap
+            IntPtr hIcon = bitmap.GetHicon();
+            using (Icon tmpIcon = Icon.FromHandle(hIcon)) {
+                // Клонируем, чтобы NotifyIcon владел копией и был безопасен от GC
+                Icon clone = (Icon)tmpIcon.Clone();
+                mNotifyIcon.Icon = clone;
+            }
+
+            // Уничтожаем оригинальный дескриптор (не влияет на клонированный)
+            DestroyIcon(hIcon);
         }
 
-        private int GetID(bool sent, bool received) {
+        // Получает ID иконки по активности
+        private int GetID(bool sent, bool received)
+        {
             if (!sent && !received) return 1;
-            if (!sent && received)  return 2;
-            if (sent && !received)  return 3;
-            return 4; 
+            if (!sent && received) return 2;
+            if (sent && !received) return 3;
+            return 4;
         }
     }
 }

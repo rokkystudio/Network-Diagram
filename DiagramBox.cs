@@ -73,20 +73,30 @@ namespace NetworkDiagram
 
         public void SetScaleY(int scale)
         {
-            if (scale < mMinScaleY) {
-                scale = mMinScaleY;
-            }
+            if (scale < mMinScaleY) scale = mMinScaleY;
 
-            if (scale == mScaleYFinish) {
+            // Принудительно сбросить, если слишком большой и новые значения маленькие
+            if (mScaleYCurrent > mMinScaleY * 4 && scale == mMinScaleY) {
+                // сбрасываем масштаб резко
+                mScaleYCurrent = scale;
+                mScaleYFinish = scale;
                 return;
             }
+
+            // Первая установка масштаба — без анимации
+            if (mScaleYCurrent == mMinScaleY && mScaleYFinish == mMinScaleY) {
+                mScaleYCurrent = scale;
+                mScaleYFinish = scale;
+                return;
+            }
+
+            if (scale == mScaleYFinish) return;
 
             if (mAutoScale) {
                 mScaleYStart = mScaleYCurrent;
                 mScaleYFinish = scale;
                 mScaleYStep = 0;
-            }
-            else {
+            } else {
                 mScaleYCurrent = scale;
                 mScaleYFinish = scale;
             }
@@ -165,41 +175,41 @@ namespace NetworkDiagram
             }
         }
 
-        private void DrawDiagram(Graphics graphics, DiagramData data)
-        {
+        private void DrawDiagram(Graphics graphics, DiagramData data) {
+            if (data.Count < 2) return;
+
+            if (data.All(p => p.value == 0)) return; // не рисуем, если все значения нули
+
             List<Point> points = new List<Point>();
 
-            // Right bottom diagram point
+            // Bottom points (для заполнения фона)
             points.Insert(0, new Point(ValueToX(0), ValueToY(0)));
-
-            // Left bottom diagram point
             points.Insert(0, new Point(ValueToX(mMaxTime), ValueToY(0)));
 
-            for (int i = 0; i < data.Count; i++)
-            {
+            for (int i = 0; i < data.Count; i++) {
                 int x = ValueToX(data[i].time);
                 int y = ValueToY(data[i].value);
 
-                // Первая точка плавно появляется из второй
-                if (i == 0 && data.Count > 5) {
-                    int timeStep = GetTimeStep(data);
-                    int diffValue = data[i].value - data[i + 1].value;
-                    int timePass = data[i + 1].time;
-                    y = ValueToY(data[i + 1].value + diffValue * timePass / timeStep);
-                }
+                // Плавный переход только если есть достаточно точек
+                if (data.Count > 5) {
+                    if (i == 0 && data.Count > 1) {
+                        int timeStep = GetTimeStep(data);
+                        int diffValue = data[i].value - data[i + 1].value;
+                        int timePass = data[i + 1].time;
+                        y = ValueToY(data[i + 1].value + diffValue * timePass / timeStep);
+                    }
 
-                // Последняя точка плавно превращается в предпоследнюю
-                if (i == data.Count - 1 && data.Count > 5) {
-                    int timeStep = GetTimeStep(data);
-                    int diffValue = data[i].value - data[i - 1].value;
-                    int timeLeft = data[i].time - data[i - 1].time;
-                    y = ValueToY(data[i - 1].value + diffValue * timeLeft / timeStep);
+                    if (i == data.Count - 1 && data.Count > 1) {
+                        int timeStep = GetTimeStep(data);
+                        int diffValue = data[i].value - data[i - 1].value;
+                        int timeLeft = data[i].time - data[i - 1].time;
+                        y = ValueToY(data[i - 1].value + diffValue * timeLeft / timeStep);
+                    }
                 }
 
                 points.Add(new Point(x, y));
             }
 
-            // graphics.SetClip(new Rectangle(x, y, 600, 300));
             graphics.FillPolygon(data.mBrush, points.ToArray());
             graphics.DrawPolygon(data.mPen, points.ToArray());
         }
@@ -208,10 +218,18 @@ namespace NetworkDiagram
             return GetDiagramWidth() - GetDiagramWidth() * time / mMaxTime + mPadding;
         }
 
-        private int ValueToY(int value) {
-            int result = GetDiagramHeight() - GetDiagramHeight() * value / mScaling.GetScaleY() + mPadding;
-            if (result > mMaxValue) result = mMaxValue;
-            return result;
+        private int ValueToY(int value)
+        {
+            int y = GetDiagramHeight() - GetDiagramHeight() * value / mScaling.GetScaleY() + mPadding;
+
+            // Защита от переполнения вверх
+            if (y < mPadding) y = mPadding;
+
+            // Защита от выхода за нижнюю границу
+            int maxY = Height - mPadding;
+            if (y > maxY) y = maxY;
+
+            return y;
         }
 
         private int GetTimeStep(DiagramData data) {
@@ -222,37 +240,17 @@ namespace NetworkDiagram
         {
             mMaxValue = 0;
 
-            foreach (DiagramData data in mDiagramList)
-            {
-                DiagramPoint[] points = data.ToArray();
-                for (int i = 0; i < points.Length; i++)
-                {
-                    DiagramPoint point = points[i];
+            foreach (DiagramData data in mDiagramList) {
+                // Удаляем устаревшие точки (время >= mMaxTime)
+                data.RemoveAll(p => p.time >= mMaxTime);
 
-                    //  Определяем максимальное значение
-                    if (point.value > mMaxValue) {
-                        mMaxValue = point.value;
-                    }
-
-                    // Первая точка остается неподвижной
-                    if (i == 0) continue;
-
-                    // Двигаем тайминги точек
+                foreach (DiagramPoint point in data) {
+                    // Сдвигаем время
                     point.time += AnimTimer.Interval;
 
-                    // Если точка устарела
-                    if (point.time >= mMaxTime)
-                    {
-                        // Тайминг не должен превышать максимальный
-                        point.time = mMaxTime;
-
-                        // Если это предпоследняя точка
-                        if (i == points.Length - 2)
-                        {
-                            // Удаляем последнюю точку
-                            data.RemoveAt(points.Length - 1);
-                            break;
-                        }
+                    // Обновляем максимум
+                    if (point.value > mMaxValue) {
+                        mMaxValue = point.value;
                     }
                 }
             }

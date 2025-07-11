@@ -6,26 +6,28 @@ using System.Windows.Forms;
 
 namespace NetworkDiagram
 {
-    // TODO 
-    // Диаграмма рисуется кусками, крайние точки
-    // Диаграмма масштабируется рывками
-    // Диаграмма нет легенды
-    // Диаграмма может выводить скорость сама
-    // Изменение размера окна должно изменять размеры компонентов
-    // Перемещение окна по клику на любой компонент
-
-    // Выбор иконки в системном трее
-    // Диаграмма в иконке системного трея
-
+    // Главное окно приложения, отвечающее за отображение сетевой активности,
+    // управление настройками, взаимодействие с системным треем и обработку таймеров.
     public partial class MainForm : Form
     {
+        // Индекс графика приёма данных
         private const int DIAGRAM_RECEIVED = 0;
+
+        // Индекс графика отправки данных
         private const int DIAGRAM_SENT = 1;
+
+        // Флаг, указывающий, нужно ли завершить приложение при закрытии формы
         private bool mCloseApplication = false;
 
+        // Включён ли компактный режим интерфейса
         private bool mCompactMode = false;
+
+        // Менеджер иконки в трее
         private NotifyManager mNotifyManager;
 
+
+        // Текущий выбранный сетевой адаптер
+        // Обновляет ComboBox без срабатывания события
         private NetworkAdapter mSelectedAdapter
         {
             get {
@@ -39,6 +41,8 @@ namespace NetworkDiagram
             }
         }
 
+        // Индекс выбранного адаптера в списке
+        // Обновляет ComboBox безопасно (без триггера событий)
         private int mSelectedAdapterIndex
         {
             get {
@@ -52,10 +56,16 @@ namespace NetworkDiagram
             }
         }
 
+        // Конструктор формы. Инициализирует интерфейс.
+        // Загружает и применяет сохранённые настройки.
+        // Устанавливает иконку, обновляет цвета, адаптеры.
+        // Запоминает последнюю выбранную сетевую карту.
         public MainForm()
         {
             InitializeComponent();
+
             Icon = Properties.Resources.ApplicationIcon;
+
             mNotifyIcon.Icon = Properties.Resources.ApplicationIcon;
             mNotifyManager = new NotifyManager(mNotifyIcon);
 
@@ -86,6 +96,19 @@ namespace NetworkDiagram
             }
         }
 
+        // Переопределён для исключения окна из ALT+TAB
+        protected override CreateParams CreateParams
+        {
+            get {
+                CreateParams cp = base.CreateParams;
+
+                // Убираем окно из ALT+TAB: делаем его "вспомогательным"
+                cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
+                return cp;
+            }
+        }
+
+        // Отменяет закрытие окна, если приложение не завершается полностью, и скрывает окно в трей.
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!mCloseApplication) {
@@ -94,6 +117,7 @@ namespace NetworkDiagram
             }
         }
 
+        // Сохраняет выбранный адаптер в настройки.
         private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (mSelectedAdapter == null) return;
@@ -101,6 +125,7 @@ namespace NetworkDiagram
             Properties.Settings.Default.Save();
         }
 
+        // Отслеживает изменения пользовательских настроек и применяет их на лету.
         public void PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Opacity") {
@@ -128,16 +153,19 @@ namespace NetworkDiagram
             }
         }
 
+        // Устанавливают цвет графика отправки данных на основе сохранённых настроек.
         private void UpdateSentColor() {
             Color color = Tools.HexToColor(Properties.Settings.Default.SentColor);
             if (color != Color.Empty) mDiagramBox.SetColor(DIAGRAM_SENT, color);
         }
 
+        // Устанавливают цвет графика приёма данных на основе сохранённых настроек.
         private void UpdateReceivedColor() {
             Color color = Tools.HexToColor(Properties.Settings.Default.ReceivedColor);
             if (color != Color.Empty) mDiagramBox.SetColor(DIAGRAM_RECEIVED, color);
         }
 
+        // Устанавливает адаптер в выпадающем списке по ID из настроек.
         private void SelectAdapterByID(String id)
         {
             foreach (NetworkAdapter adapter in mAdaptersComboBox.Items)
@@ -149,6 +177,8 @@ namespace NetworkDiagram
             }
         }
 
+        // Вызывается по таймеру. Получает текущую скорость отправки/приёма,
+        // обновляет график, текст и иконку в трее.
         private void SpeedTimer_Tick(object sender, EventArgs e)
         {
             if (mSelectedAdapter == null) return;
@@ -172,6 +202,7 @@ namespace NetworkDiagram
             mNotifyManager.DrawIcon(style, sentThroughput, receivedThroughput);
         }
 
+        // Преобразует байты в удобочитаемую строку (KB, MB, ...).
         private String SpeedToString(long bytes)
         {
             if (bytes > 0 && bytes < 1024) bytes = 1024;
@@ -187,26 +218,32 @@ namespace NetworkDiagram
             return String.Format("{0:0.##} {1}", bytes, sizes[order]);
         }
 
+        // Периодически обновляет список сетевых адаптеров.
         private void AdaptersTimer_Tick(object sender, EventArgs e) { 
             NetworkAdapter.UpdateAdapters(mAdaptersComboBox);
         }
 
+        // Заглушки под анимации (пока не реализованы).
         public void OnAnimationStart() {
             throw new NotImplementedException();
         }
 
+        // Заглушки под анимации (пока не реализованы).
         public void OnAnimationFinish() {
             throw new NotImplementedException();
         }
 
+        // Восстанавливает окно при двойном клике по иконке в трее.
         private void NotifyIcon_DoubleClick(object sender, EventArgs e) {
             showDiagram();
         }
 
+        // Скрывает окно при сворачивании.
         private void MainForm_Resize(object sender, EventArgs e) {
             if (WindowState == FormWindowState.Minimized) Hide();
         }
 
+        // Сохраняет позицию окна при перемещении.
         private void MainForm_Move(object sender, EventArgs e)
         {
             if (WindowState != FormWindowState.Minimized) {
@@ -216,26 +253,32 @@ namespace NetworkDiagram
             }
         }
 
+        // Открывает окно настроек.
         private void MainMenuItemSettings_Click(object sender, EventArgs e) {
             showSettings();
         }
 
+        // Закрывает приложение.
         private void MainMenuItemExit_Click(object sender, EventArgs e) {
             closeApplication();
         }
 
+        // Переключает режимо отображения компактный / обычный.
         private void MainMenuItemCompact_Click(object sender, EventArgs e) {
             setCompactMode(true);
         }
 
+        // Открывает окно приложения.
         private void NotifyMenuItemOpen_Click(object sender, EventArgs e) {
             showDiagram();
         }
-
+        
+        // Открывает окно настроек.
         private void NotifyMenuItemSettings_Click(object sender, EventArgs e) {
             showSettings();
         }
 
+        // Сбрасывает положение окна по умолчанию.
         private void NotifyMenuItemReset_Click(object sender, EventArgs e)
         {
             Top = 0;
@@ -246,33 +289,40 @@ namespace NetworkDiagram
             Properties.Settings.Default.Save();
         }
 
+        // Закрывает приложение.
         private void NotifyMenuItemExit_Click(object sender, EventArgs e) {
             closeApplication();
         }
 
+        // Показывает основное окно и делает его активным.
         private void showDiagram() {
             WindowState = FormWindowState.Normal;
             BringToFront();
             Show();
         }
 
+        // Открывает окно настроек.
         private void showSettings() {
             new SettingsForm().Show();
         }
 
+        // Закрывает приложение.
         private void closeApplication() {
             mCloseApplication = true;
             Close();
         }
 
+        // Устанавливает прозрачность окон.
         private void setOpacity(float value) {
             if (value > 0 && value <= 1f) Opacity = value;
         }
 
+        // Переключает в компактный режим по двойному клику на графике.
         private void SpeedDiagram_MouseDoubleClick(object sender, MouseEventArgs e) {
             setCompactMode(!mCompactMode);
         }
 
+        // Переключает диаграмму в компактный режим
         private void setCompactMode(bool enable)
         {
             if (enable) {
@@ -286,16 +336,18 @@ namespace NetworkDiagram
             }
         }
 
+        // Добавляет или удаляет приложение из автозагрузки через реестр Windows.
         public void StartupEnableClassic(bool enabled)
         {
             String name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
             String path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(path, true);
-            if (enabled) {
-                key.SetValue(name, '"' + Application.ExecutablePath + '"');
-            }
-            else {
-                key.DeleteValue(name);
+            using (var key = Registry.CurrentUser.OpenSubKey(path, true)) {
+                if (key != null) {
+                    if (enabled)
+                        key.SetValue(name, '"' + Application.ExecutablePath + '"');
+                    else
+                        key.DeleteValue(name, false); // false = silent if not exists
+                }
             }
         }
     }
