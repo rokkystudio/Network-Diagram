@@ -8,7 +8,7 @@ namespace NetworkDiagram
 {
     // Главное окно приложения, отвечающее за отображение сетевой активности,
     // управление настройками, взаимодействие с системным треем и обработку таймеров.
-    public partial class MainForm : Form
+    public partial class MainForm : HiddenForm
     {
         // Индекс графика приёма данных
         private const int DIAGRAM_RECEIVED = 0;
@@ -93,18 +93,6 @@ namespace NetworkDiagram
             // Select first adapter if not selected
             if (mAdaptersComboBox.Items.Count > 0 && mSelectedAdapterIndex == -1) {
                 mSelectedAdapterIndex = 0;
-            }
-        }
-
-        // Переопределён для исключения окна из ALT+TAB
-        protected override CreateParams CreateParams
-        {
-            get {
-                CreateParams cp = base.CreateParams;
-
-                // Убираем окно из ALT+TAB: делаем его "вспомогательным"
-                cp.ExStyle |= 0x80; // WS_EX_TOOLWINDOW
-                return cp;
             }
         }
 
