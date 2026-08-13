@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>NetworkDiagram</RootNamespace>
     <AssemblyName>Network Diagram</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -37,8 +37,14 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>NetworkDiagram.Program</StartupObject>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ScottPlot">
+      <HintPath>packages\ScottPlot.4.1.74\lib\net472\ScottPlot.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,6 +62,7 @@
     <Compile Include="DiagramBox.Designer.cs">
       <DependentUpon>DiagramBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="AssetService.cs" />
     <Compile Include="HiddenForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -65,17 +72,22 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="LocalizationService.cs" />
     <Compile Include="NetworkAdapter.cs" />
+    <Compile Include="NetworkInterfaceIconService.cs" />
     <Compile Include="NotifyManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SurfacePanel.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ThemeService.cs" />
     <Compile Include="Tools.cs" />
+    <Compile Include="WindowPlacementService.cs" />
     <EmbeddedResource Include="DiagramBox.resx">
       <DependentUpon>DiagramBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -95,6 +107,7 @@
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

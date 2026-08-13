@@ -22,6 +22,10 @@ namespace NetworkDiagram
             {
                 components.Dispose();
             }
+            if (disposing)
+            {
+                this.mPlotBitmap?.Dispose();
+            }
             base.Dispose(disposing);
         }
 

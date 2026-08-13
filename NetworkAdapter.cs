@@ -57,6 +57,10 @@ namespace NetworkDiagram
             get { return mInterface.Description; }
         }
 
+        public string DisplayName {
+            get { return string.IsNullOrWhiteSpace(mInterface.Description) ? mInterface.Name : mInterface.Description; }
+        }
+
         // Ссылка на оригинальный NetworkInterface.
         public NetworkInterface Interface {
             get { return mInterface; }
@@ -109,7 +113,7 @@ namespace NetworkDiagram
 
         // Возвращает описание адаптера (используется в ComboBox).
         public override string ToString() {
-            return mInterface.Description;
+            return DisplayName;
         }
     }
 }

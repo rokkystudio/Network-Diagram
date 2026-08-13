@@ -26,5 +26,11 @@
     <Setting Name="ReceivedColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#C0F0F0</Value>
     </Setting>
+    <Setting Name="Theme" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Light</Value>
+    </Setting>
+    <Setting Name="Language" Type="System.String" Scope="User">
+      <Value Profile="(Default)">auto</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
