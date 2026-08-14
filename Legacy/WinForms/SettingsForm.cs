@@ -53,6 +53,12 @@ namespace NetworkDiagram
             Properties.Settings.Default.PropertyChanged += PropertyChanged;
             ThemeService.ThemeChanged += ThemeService_ThemeChanged;
             LocalizationService.LanguageChanged += LocalizationService_LanguageChanged;
+            mLanguageButton.TabStop = false;
+            mThemeButton.TabStop = false;
+            mCloseButton.TabStop = false;
+            mLanguageButton.Enter += HeaderButton_Enter;
+            mThemeButton.Enter += HeaderButton_Enter;
+            mCloseButton.Enter += HeaderButton_Enter;
 
             ApplyLocalization();
             ApplyTheme();
@@ -288,9 +294,9 @@ namespace NetworkDiagram
             TrackBarOpacity.BackColor = palette.SurfaceRaisedColor;
 
             mLanguageButton.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mThemeButton.Font = new Font("Segoe UI Symbol", 11F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mCloseButton.Font = new Font("Segoe UI Symbol", 13F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mCloseButton.ForeColor = palette.MutedTextColor;
+            mThemeButton.Font = new Font("Segoe UI Symbol", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mCloseButton.Font = new Font("Segoe UI Symbol", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mCloseButton.ForeColor = Color.White;
             ApplyButtonAssets();
 
             UpdateColorPreview(mSentColorLabel, mSentColorLabel.Text);
@@ -304,8 +310,8 @@ namespace NetworkDiagram
                 ? AssetService.GetScaledImage(@"Assets\Flags\RU.png", 24, 18)
                 : AssetService.GetScaledImage(@"Assets\Flags\GB.png", 24, 18);
             Image themeImage = ThemeService.IsDarkTheme(ThemeService.CurrentTheme)
-                ? AssetService.GetScaledImage(@"Assets\ThemeSun.png", 20, 20)
-                : AssetService.GetScaledImage(@"Assets\ThemeMoon.png", 20, 20);
+                ? AssetService.GetScaledImage(@"Assets\Icons\ThemeSun.png", 20, 20)
+                : AssetService.GetScaledImage(@"Assets\Icons\ThemeMoon.png", 20, 20);
 
             mLanguageButton.Image = languageImage;
             mLanguageButton.Text = languageImage == null
@@ -330,6 +336,11 @@ namespace NetworkDiagram
                 !LocalizationService.IsRussianLanguage(LocalizationService.CurrentLanguage);
             mLanguageMenuItemRussian.Checked = !LocalizationService.IsAutomaticLanguageSelection &&
                 LocalizationService.IsRussianLanguage(LocalizationService.CurrentLanguage);
+        }
+
+        private void HeaderButton_Enter(object sender, EventArgs e)
+        {
+            BeginInvoke((MethodInvoker)delegate { ActiveControl = null; });
         }
 
         private void SettingsForm_Move(object sender, EventArgs e)

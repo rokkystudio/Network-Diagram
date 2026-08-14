@@ -1,0 +1,280 @@
+<Window x:Class="NetworkDiagram.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:NetworkDiagram.Controls"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Network Diagram"
+        Width="420"
+        Height="320"
+        MinWidth="320"
+        MinHeight="250"
+        WindowStyle="None"
+        ResizeMode="CanResizeWithGrip"
+        AllowsTransparency="True"
+        ShowInTaskbar="False"
+        Background="Transparent"
+        Foreground="{DynamicResource TextBrush}"
+        Closing="Window_OnClosing"
+        Closed="Window_OnClosed"
+        LocationChanged="Window_OnLocationChanged"
+        StateChanged="Window_OnStateChanged">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            ResizeBorderThickness="6"
+                            UseAeroCaptionButtons="False" />
+    </shell:WindowChrome.WindowChrome>
+
+    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Background="{DynamicResource BackgroundBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="TitleRow" Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border x:Name="TitleBar"
+                    Grid.Row="0"
+                    Height="56"
+                    Margin="0,0,0,10"
+                    Padding="8,2,8,2"
+                    Background="{DynamicResource TitleBarBackgroundBrush}"
+                    BorderBrush="{DynamicResource TitleBarBorderBrush}"
+                    BorderThickness="1"
+                    MouseLeftButtonDown="TitleBar_OnMouseLeftButtonDown">
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Right"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                    <Button x:Name="LanguageButton"
+                            Style="{StaticResource TitleBarButtonStyle}"
+                            Click="LanguageButton_OnClick">
+                        <Image x:Name="LanguageButtonImage"
+                               Width="24"
+                               Height="18"
+                               Stretch="Uniform"
+                               RenderOptions.BitmapScalingMode="Fant" />
+                    </Button>
+                    <Button x:Name="ThemeButton"
+                            Style="{StaticResource TitleBarButtonStyle}"
+                            Click="ThemeButton_OnClick">
+                        <Image x:Name="ThemeButtonImage" Width="20" Height="20" Stretch="Uniform" />
+                    </Button>
+                    <Button x:Name="SettingsButton"
+                            Style="{StaticResource TitleBarButtonStyle}"
+                            Content="⚙"
+                            FontFamily="Segoe UI Symbol"
+                            FontSize="16"
+                            ToolTip="{Binding SettingsToolTipText}"
+                            Click="SettingsButton_OnClick" />
+                    <Button x:Name="CloseButton"
+                            Style="{StaticResource TitleBarCloseButtonStyle}"
+                            Content="✕"
+                            ToolTip="{Binding HideToolTipText}"
+                            Click="CloseButton_OnClick" />
+                    </StackPanel>
+
+                    <Border DockPanel.Dock="Left"
+                            Width="48"
+                            Height="48"
+                            Margin="0,0,12,0"
+                            VerticalAlignment="Center">
+                        <Image x:Name="AppIcon"
+                               Width="32"
+                               Height="32"
+                               Stretch="Uniform" />
+                    </Border>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding WindowTitleText}"
+                                   FontSize="18"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding WindowSubtitleText}"
+                                   Margin="0,2,0,0"
+                                   FontSize="10"
+                                   Foreground="{DynamicResource MutedTextBrush}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+            <Grid Grid.Row="1" Margin="12,0,12,12">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="StatsRow" Height="150" />
+                    <RowDefinition x:Name="SpacerRow" Height="8" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Border x:Name="StatsPanel"
+                        Grid.Row="0"
+                        Background="{DynamicResource BackgroundBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="34" />
+                            <RowDefinition Height="8" />
+                            <RowDefinition Height="58" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button x:Name="AdapterButton"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="3"
+                                Style="{StaticResource AdapterButtonStyle}"
+                                Click="AdapterButton_OnClick">
+                            <DockPanel LastChildFill="True">
+                                <TextBlock DockPanel.Dock="Right"
+                                           Margin="8,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           Text="▾" />
+                                <Image x:Name="AdapterButtonImage"
+                                       DockPanel.Dock="Left"
+                                       Width="16"
+                                       Height="16"
+                                       Margin="0,0,8,0"
+                                       VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding SelectedAdapter.DisplayName}"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                            </DockPanel>
+                        </Button>
+
+                        <Border Grid.Row="2"
+                                Grid.Column="0"
+                                Padding="10,6"
+                                Background="{DynamicResource SurfaceBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="22" />
+                                    <RowDefinition Height="22" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" MinWidth="82" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="UploadTotalTitle"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="{Binding UploadTitleText}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="UploadTotalValue"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           Margin="8,0,0,0"
+                                           Text="{Binding UploadTotalText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Right"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="DownloadTotalTitle"
+                                           Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="{Binding DownloadTitleText}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="DownloadTotalValue"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="8,0,0,0"
+                                           Text="{Binding DownloadTotalText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Right"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="2"
+                                Grid.Column="2"
+                                Padding="10,6"
+                                Background="{DynamicResource SurfaceBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="22" />
+                                    <RowDefinition Height="22" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" MinWidth="82" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock x:Name="UploadSpeedTitle"
+                                           Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="{Binding UploadSpeedTitleText}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="UploadSpeedValue"
+                                           Grid.Row="0"
+                                           Grid.Column="1"
+                                           Margin="8,0,0,0"
+                                           Text="{Binding UploadSpeedText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Right"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="DownloadSpeedTitle"
+                                           Grid.Row="1"
+                                           Grid.Column="0"
+                                           Text="{Binding DownloadSpeedTitleText}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource MutedTextBrush}"
+                                           VerticalAlignment="Center" />
+                                <TextBlock x:Name="DownloadSpeedValue"
+                                           Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="8,0,0,0"
+                                           Text="{Binding DownloadSpeedText}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           TextAlignment="Right"
+                                           VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Row="4"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="3"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <Button MinWidth="86"
+                                    Margin="0,0,8,0"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    Content="{Binding ResetTotalsText}"
+                                    Command="{Binding ResetTotalsCommand}" />
+                            <Button MinWidth="86"
+                                    Style="{StaticResource ActionButtonStyle}"
+                                    Content="{Binding SessionTotalsText}"
+                                    Command="{Binding RestoreSessionTotalsCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <controls:TrafficGraphControl x:Name="TrafficGraph"
+                                              Grid.Row="2"
+                                              SentBrush="#F0D0F0"
+                                              ReceivedBrush="#C0F0F0"
+                                              MouseDoubleClick="TrafficGraph_OnMouseDoubleClick"
+                                              MouseLeftButtonDown="TrafficGraph_OnMouseLeftButtonDown"
+                                              MouseMove="TrafficGraph_OnMouseMove"
+                                              MouseLeftButtonUp="TrafficGraph_OnMouseLeftButtonUp" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

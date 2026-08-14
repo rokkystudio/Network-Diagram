@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.NetworkInformation;
-using System.Windows.Forms;
 
 namespace NetworkDiagram
 {
@@ -11,30 +9,6 @@ namespace NetworkDiagram
     {
         private NetworkInterface mInterface;
         private long mBytesSentLast, mBytesReceivedLast;
-
-        // Обновляет список адаптеров в ComboBox:
-        // добавляет новые и удаляет отключённые.
-        public static void UpdateAdapters(ComboBox comboBox)
-        {
-            List<NetworkAdapter> currentAdapters = GetAdapters();
-            var currentIds = new HashSet<string>(currentAdapters.Select(a => a.Id));
-
-            // Добавление новых
-            foreach (var adapter in currentAdapters) {
-                if (!comboBox.Items.Cast<NetworkAdapter>().Any(x => x.Id == adapter.Id)) {
-                    comboBox.Items.Add(adapter);
-                }
-            }
-
-            // Удаление неактуальных
-            var itemsToRemove = comboBox.Items.Cast<NetworkAdapter>()
-                .Where(item => !currentIds.Contains(item.Id))
-                .ToList();
-
-            foreach (var item in itemsToRemove) {
-                comboBox.Items.Remove(item);
-            }
-        }
 
         // Возвращает список всех сетевых адаптеров на устройстве.
         public static List<NetworkAdapter> GetAdapters()

@@ -241,11 +241,13 @@ namespace NetworkDiagram
             }
 
             int sentSpeed = mSelectedAdapter.GetSentCount() / mSpeedTimer.Interval * 1000;
-            mSentSpeedLabel.Text = SpeedToString(sentSpeed);
+            mSentSpeedLabel.Text = FormatBytes(mSelectedAdapter.GetSentBytesAll());
+            mSentRateLabel.Text = FormatRate(sentSpeed);
             mDiagramBox.AddValue(DiagramSent, sentSpeed);
 
             int receivedSpeed = mSelectedAdapter.GetReceivedCount() / mSpeedTimer.Interval * 1000;
-            mReceivedSpeedLabel.Text = SpeedToString(receivedSpeed);
+            mReceivedSpeedLabel.Text = FormatBytes(mSelectedAdapter.GetReceivedBytesAll());
+            mReceivedRateLabel.Text = FormatRate(receivedSpeed);
             mDiagramBox.AddValue(DiagramReceived, receivedSpeed);
 
             int maxValue = mDiagramBox.GetMaxValue();
@@ -255,10 +257,10 @@ namespace NetworkDiagram
 
             int sentThroughput = sentSpeed * 100 / maxValue;
             int receivedThroughput = receivedSpeed * 100 / maxValue;
-            mNotifyManager.DrawIcon(NotifyManager.DARK_ARROWS, sentThroughput, receivedThroughput);
+            mNotifyManager.DrawIcon(NotifyManager.DefaultTrayArrowsStyle, sentThroughput, receivedThroughput);
         }
 
-        private string SpeedToString(long bytes)
+        private string FormatBytes(long bytes)
         {
             if (bytes > 0 && bytes < 1024) {
                 bytes = 1024;
@@ -278,6 +280,11 @@ namespace NetworkDiagram
             return string.Format("{0:0.##} {1}", bytes, sizes[order]);
         }
 
+        private string FormatRate(long bytesPerSecond)
+        {
+            return FormatBytes(bytesPerSecond) + "/s";
+        }
+
         private void AdaptersTimer_Tick(object sender, EventArgs e)
         {
             NetworkAdapter.UpdateAdapters(mAdaptersComboBox);
@@ -295,7 +302,19 @@ namespace NetworkDiagram
 
         private void NotifyIcon_DoubleClick(object sender, EventArgs e)
         {
+            if (Visible && WindowState == FormWindowState.Normal) {
+                Hide();
+                return;
+            }
+
             showDiagram();
+        }
+
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && Visible) {
+                ClearHeaderButtonFocus();
+            }
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -356,6 +375,7 @@ namespace NetworkDiagram
             Show();
             BringToFront();
             Activate();
+            ClearHeaderButtonFocus();
         }
 
         private void showSettings()
@@ -423,7 +443,7 @@ namespace NetworkDiagram
             mBodySpacerPanel.Visible = !enable;
 
             mBodyPanel.Padding = enable ? Padding.Empty : new Padding(12, 0, 12, 12);
-            mPanelBottom.Padding = enable ? Padding.Empty : new Padding(16, 14, 16, 14);
+            mPanelBottom.Padding = enable ? Padding.Empty : new Padding(16, 2, 16, 12);
 
             ApplyTheme();
         }
@@ -536,25 +556,44 @@ namespace NetworkDiagram
             mNotifyMenu.ShowCheckMargin = false;
             mResizeGripPanel.Cursor = Cursors.SizeNWSE;
             mResizeGripPanel.BringToFront();
+            Panel.SizeChanged += StatsPanel_SizeChanged;
+            mSettingsButton.Enter += HeaderButton_Enter;
+            mCloseButton.Enter += HeaderButton_Enter;
+            mLanguageButton.Visible = false;
+            mThemeButton.Visible = false;
+            mSettingsButton.Visible = true;
+            mCloseButton.Visible = true;
+            mSettingsButton.Location = new Point(322, 4);
+            mSettingsButton.BringToFront();
+            mCloseButton.BringToFront();
+            mWindowTitleLabel.MaximumSize = new Size(250, 0);
+            mWindowSubtitleLabel.MaximumSize = new Size(250, 0);
 
             mAdaptersComboBox.Location = new Point(16, 14);
+            mAdaptersComboBox.Size = new Size(Math.Max(220, Panel.ClientSize.Width - 32), 24);
             mSentTitleLabel.AutoSize = false;
-            mSentTitleLabel.Location = new Point(16, 52);
-            mSentTitleLabel.Size = new Size(92, 20);
             mSentTitleLabel.TextAlign = ContentAlignment.MiddleLeft;
 
             mReceivedTitleLabel.AutoSize = false;
-            mReceivedTitleLabel.Location = new Point(16, 80);
-            mReceivedTitleLabel.Size = new Size(92, 20);
             mReceivedTitleLabel.TextAlign = ContentAlignment.MiddleLeft;
+            mSentRateTitleLabel.AutoSize = false;
+            mSentRateTitleLabel.TextAlign = ContentAlignment.MiddleLeft;
+            mReceivedRateTitleLabel.AutoSize = false;
+            mReceivedRateTitleLabel.TextAlign = ContentAlignment.MiddleLeft;
+            mSentSpeedLabel.AutoEllipsis = true;
+            mReceivedSpeedLabel.AutoEllipsis = true;
+            mSentRateLabel.AutoEllipsis = true;
+            mReceivedRateLabel.AutoEllipsis = true;
+            mSentSpeedLabel.TextAlign = ContentAlignment.MiddleRight;
+            mReceivedSpeedLabel.TextAlign = ContentAlignment.MiddleRight;
+            mSentRateLabel.TextAlign = ContentAlignment.MiddleRight;
+            mReceivedRateLabel.TextAlign = ContentAlignment.MiddleRight;
 
-            mSentSpeedLabel.Location = new Point(116, 50);
-            mSentSpeedLabel.Size = new Size(262, 24);
-            mReceivedSpeedLabel.Location = new Point(116, 78);
-            mReceivedSpeedLabel.Size = new Size(262, 24);
-
-            Panel.Height = 116;
-            mBodySpacerPanel.Height = 14;
+            Panel.Height = 82;
+            mBodySpacerPanel.Height = 4;
+            mPanelBottom.Padding = new Padding(16, 2, 16, 12);
+            ApplyNotifyMenuLayout();
+            UpdateStatsLayout();
         }
 
         private void ApplyLocalization()
@@ -564,8 +603,10 @@ namespace NetworkDiagram
 
             mWindowTitleLabel.Text = LocalizationService.Text("app_name");
             mWindowSubtitleLabel.Text = LocalizationService.Text("app_subtitle");
-            mSentTitleLabel.Text = LocalizationService.Text("sent");
-            mReceivedTitleLabel.Text = LocalizationService.Text("received");
+            mSentTitleLabel.Text = LocalizationService.Text("upload");
+            mReceivedTitleLabel.Text = LocalizationService.Text("download");
+            mSentRateTitleLabel.Text = LocalizationService.Text("upload_speed");
+            mReceivedRateTitleLabel.Text = LocalizationService.Text("download_speed");
 
             NotifyMenuItemOpen.Text = LocalizationService.Text("open");
             NotifyMenuItemCompact.Text = LocalizationService.Text("compact_mode");
@@ -585,6 +626,7 @@ namespace NetworkDiagram
             mToolTip.SetToolTip(mThemeButton, LocalizationService.Text("tooltip_theme"));
             mToolTip.SetToolTip(mCloseButton, LocalizationService.Text("tooltip_hide"));
             ApplyButtonAssets();
+            UpdateStatsLayout();
         }
 
         private void ApplyTheme()
@@ -593,6 +635,7 @@ namespace NetworkDiagram
 
             ThemeService.ApplyFormStyle(this);
             ThemeService.ApplyToolStrip(mNotifyMenu);
+            ApplyNotifyMenuLayout();
             ThemeService.StyleComboBox(mAdaptersComboBox);
             ThemeService.StyleTitleBarButton(mLanguageButton);
             ThemeService.StyleTitleBarButton(mSettingsButton);
@@ -617,16 +660,26 @@ namespace NetworkDiagram
 
             mSentTitleLabel.ForeColor = palette.MutedTextColor;
             mReceivedTitleLabel.ForeColor = palette.MutedTextColor;
+            mSentRateTitleLabel.ForeColor = palette.MutedTextColor;
+            mReceivedRateTitleLabel.ForeColor = palette.MutedTextColor;
             mSentSpeedLabel.ForeColor = palette.TextColor;
             mReceivedSpeedLabel.ForeColor = palette.TextColor;
-            mSentSpeedLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mReceivedSpeedLabel.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mSentRateLabel.ForeColor = palette.TextColor;
+            mReceivedRateLabel.ForeColor = palette.TextColor;
+            mSentTitleLabel.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mReceivedTitleLabel.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mSentRateTitleLabel.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mReceivedRateTitleLabel.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mSentSpeedLabel.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mReceivedSpeedLabel.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mSentRateLabel.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mReceivedRateLabel.Font = new Font("Segoe UI Semibold", 9.25F, FontStyle.Regular, GraphicsUnit.Point, 204);
 
             mLanguageButton.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mSettingsButton.Font = new Font("Segoe UI Symbol", 13F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mThemeButton.Font = new Font("Segoe UI Symbol", 11F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mCloseButton.Font = new Font("Segoe UI Symbol", 13F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            mCloseButton.ForeColor = palette.MutedTextColor;
+            mSettingsButton.Font = new Font("Segoe UI Symbol", 11F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mThemeButton.Font = new Font("Segoe UI Symbol", 10F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mCloseButton.Font = new Font("Segoe UI Symbol", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            mCloseButton.ForeColor = Color.White;
 
             ApplyButtonAssets();
             mDiagramBox.SetTheme(palette);
@@ -640,8 +693,8 @@ namespace NetworkDiagram
                 ? AssetService.GetScaledImage(@"Assets\Flags\RU.png", 24, 18)
                 : AssetService.GetScaledImage(@"Assets\Flags\GB.png", 24, 18);
             Image themeImage = ThemeService.IsDarkTheme(ThemeService.CurrentTheme)
-                ? AssetService.GetScaledImage(@"Assets\ThemeSun.png", 20, 20)
-                : AssetService.GetScaledImage(@"Assets\ThemeMoon.png", 20, 20);
+                ? AssetService.GetScaledImage(@"Assets\Icons\ThemeSun.png", 20, 20)
+                : AssetService.GetScaledImage(@"Assets\Icons\ThemeMoon.png", 20, 20);
 
             mLanguageButton.Image = languageImage;
             mLanguageButton.Text = languageImage == null
@@ -660,6 +713,9 @@ namespace NetworkDiagram
             mSettingsButton.Image = null;
             mSettingsButton.Text = "⚙";
             mSettingsButton.TextAlign = ContentAlignment.MiddleCenter;
+            mCloseButton.Image = null;
+            mCloseButton.Text = "✕";
+            mCloseButton.TextAlign = ContentAlignment.MiddleCenter;
             mLanguageMenuItemAutomatic.Image = LocalizationService.IsRussianLanguage(LocalizationService.DetectedLanguage)
                 ? AssetService.GetScaledImage(@"Assets\Flags\RU.png", 20, 14)
                 : AssetService.GetScaledImage(@"Assets\Flags\GB.png", 20, 14);
@@ -684,6 +740,96 @@ namespace NetworkDiagram
             if (!mCloseApplication) {
                 showDiagram();
             }
+        }
+
+        private void StatsPanel_SizeChanged(object sender, EventArgs e)
+        {
+            UpdateStatsLayout();
+        }
+
+        private void UpdateStatsLayout()
+        {
+            const int leftPadding = 16;
+            const int rightPadding = 16;
+            const int topPadding = 10;
+            const int comboHeight = 24;
+            const int statsTop = 44;
+            const int rowHeight = 18;
+            const int groupGap = 16;
+            const int labelGap = 8;
+
+            int contentWidth = Math.Max(220, Panel.ClientSize.Width - leftPadding - rightPadding);
+            mAdaptersComboBox.Location = new Point(leftPadding, topPadding);
+            mAdaptersComboBox.Size = new Size(contentWidth, comboHeight);
+
+            int groupWidth = Math.Max(110, (contentWidth - groupGap) / 2);
+            int leftGroupX = leftPadding;
+            int rightGroupX = leftPadding + groupWidth + groupGap;
+
+            int sentTitleWidth = Math.Max(48, TextRenderer.MeasureText(mSentTitleLabel.Text ?? string.Empty, mSentTitleLabel.Font).Width + 4);
+            int receivedTitleWidth = Math.Max(68, TextRenderer.MeasureText(mReceivedTitleLabel.Text ?? string.Empty, mReceivedTitleLabel.Font).Width + 4);
+            int sentRateTitleWidth = Math.Max(60, TextRenderer.MeasureText(mSentRateTitleLabel.Text ?? string.Empty, mSentRateTitleLabel.Font).Width + 4);
+            int receivedRateTitleWidth = Math.Max(60, TextRenderer.MeasureText(mReceivedRateTitleLabel.Text ?? string.Empty, mReceivedRateTitleLabel.Font).Width + 4);
+
+            int sentValueWidth = Math.Max(36, groupWidth - sentTitleWidth - labelGap);
+            int receivedValueWidth = Math.Max(36, groupWidth - receivedTitleWidth - labelGap);
+            int sentRateValueWidth = Math.Max(36, groupWidth - sentRateTitleWidth - labelGap);
+            int receivedRateValueWidth = Math.Max(36, groupWidth - receivedRateTitleWidth - labelGap);
+
+            mSentTitleLabel.Location = new Point(leftGroupX, statsTop);
+            mSentTitleLabel.Size = new Size(sentTitleWidth, rowHeight);
+            mSentSpeedLabel.Location = new Point(leftGroupX + sentTitleWidth + labelGap, statsTop);
+            mSentSpeedLabel.Size = new Size(sentValueWidth, rowHeight);
+
+            mSentRateTitleLabel.Location = new Point(rightGroupX, statsTop);
+            mSentRateTitleLabel.Size = new Size(sentRateTitleWidth, rowHeight);
+            mSentRateLabel.Location = new Point(rightGroupX + sentRateTitleWidth + labelGap, statsTop);
+            mSentRateLabel.Size = new Size(sentRateValueWidth, rowHeight);
+
+            int secondRowTop = statsTop + rowHeight;
+            mReceivedTitleLabel.Location = new Point(leftGroupX, secondRowTop);
+            mReceivedTitleLabel.Size = new Size(receivedTitleWidth, rowHeight);
+            mReceivedSpeedLabel.Location = new Point(leftGroupX + receivedTitleWidth + labelGap, secondRowTop);
+            mReceivedSpeedLabel.Size = new Size(receivedValueWidth, rowHeight);
+
+            mReceivedRateTitleLabel.Location = new Point(rightGroupX, secondRowTop);
+            mReceivedRateTitleLabel.Size = new Size(receivedRateTitleWidth, rowHeight);
+            mReceivedRateLabel.Location = new Point(rightGroupX + receivedRateTitleWidth + labelGap, secondRowTop);
+            mReceivedRateLabel.Size = new Size(receivedRateValueWidth, rowHeight);
+        }
+
+        private void ApplyNotifyMenuLayout()
+        {
+            mNotifyMenu.Padding = new Padding(2);
+            mNotifyMenu.ShowImageMargin = false;
+            mNotifyMenu.ShowCheckMargin = false;
+
+            foreach (ToolStripItem item in mNotifyMenu.Items) {
+                ToolStripMenuItem menuItem = item as ToolStripMenuItem;
+                if (menuItem == null) {
+                    continue;
+                }
+
+                menuItem.AutoSize = true;
+                menuItem.Margin = Padding.Empty;
+                menuItem.Padding = new Padding(10, 2, 10, 2);
+            }
+        }
+
+        private void HeaderButton_Enter(object sender, EventArgs e)
+        {
+            ClearHeaderButtonFocus();
+        }
+
+        private void ClearHeaderButtonFocus()
+        {
+            BeginInvoke((MethodInvoker)delegate
+            {
+                if (ActiveControl == mSettingsButton || ActiveControl == mCloseButton ||
+                    ActiveControl == mLanguageButton || ActiveControl == mThemeButton) {
+                    ActiveControl = null;
+                }
+            });
         }
 
         private void ResizeGripPanel_MouseDown(object sender, MouseEventArgs e)

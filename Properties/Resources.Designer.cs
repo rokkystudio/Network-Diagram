@@ -73,9 +73,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify1_1 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle1State1 {
             get {
-                object obj = ResourceManager.GetObject("notify1_1", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle1State1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify1_2 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle1State2 {
             get {
-                object obj = ResourceManager.GetObject("notify1_2", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle1State2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify1_3 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle1State3 {
             get {
-                object obj = ResourceManager.GetObject("notify1_3", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle1State3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify1_4 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle1State4 {
             get {
-                object obj = ResourceManager.GetObject("notify1_4", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle1State4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify2_1 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle2State1 {
             get {
-                object obj = ResourceManager.GetObject("notify2_1", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle2State1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify2_2 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle2State2 {
             get {
-                object obj = ResourceManager.GetObject("notify2_2", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle2State2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +133,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify2_3 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle2State3 {
             get {
-                object obj = ResourceManager.GetObject("notify2_3", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle2State3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +143,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify2_4 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle2State4 {
             get {
-                object obj = ResourceManager.GetObject("notify2_4", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle2State4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +153,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify3_1 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle3State1 {
             get {
-                object obj = ResourceManager.GetObject("notify3_1", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle3State1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify3_2 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle3State2 {
             get {
-                object obj = ResourceManager.GetObject("notify3_2", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle3State2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +173,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify3_3 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle3State3 {
             get {
-                object obj = ResourceManager.GetObject("notify3_3", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle3State3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,9 +183,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify3_4 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle3State4 {
             get {
-                object obj = ResourceManager.GetObject("notify3_4", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle3State4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -193,9 +193,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify4_1 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle4State1 {
             get {
-                object obj = ResourceManager.GetObject("notify4_1", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle4State1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -203,9 +203,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify4_2 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle4State2 {
             get {
-                object obj = ResourceManager.GetObject("notify4_2", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle4State2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,9 +213,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify4_3 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle4State3 {
             get {
-                object obj = ResourceManager.GetObject("notify4_3", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle4State3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -223,9 +223,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify4_4 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle4State4 {
             get {
-                object obj = ResourceManager.GetObject("notify4_4", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle4State4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -233,9 +233,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify5_1 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle5State1 {
             get {
-                object obj = ResourceManager.GetObject("notify5_1", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle5State1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -243,9 +243,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify5_2 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle5State2 {
             get {
-                object obj = ResourceManager.GetObject("notify5_2", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle5State2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -253,9 +253,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify5_3 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle5State3 {
             get {
-                object obj = ResourceManager.GetObject("notify5_3", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle5State3", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -263,9 +263,9 @@ namespace NetworkDiagram.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap notify5_4 {
+        internal static System.Drawing.Bitmap TrayArrowsStyle5State4 {
             get {
-                object obj = ResourceManager.GetObject("notify5_4", resourceCulture);
+                object obj = ResourceManager.GetObject("TrayArrowsStyle5State4", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

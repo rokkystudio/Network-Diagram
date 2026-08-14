@@ -58,6 +58,18 @@ namespace NetworkDiagram.Properties {
                 this["WindowPosY"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MainWindowVisible {
+            get {
+                return ((bool)(this["MainWindowVisible"]));
+            }
+            set {
+                this["MainWindowVisible"] = value;
+            }
+        }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -92,6 +104,18 @@ namespace NetworkDiagram.Properties {
             }
             set {
                 this["AlwaysOnTop"] = value;
+            }
+        }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int TrayIconStyle {
+            get {
+                return ((int)(this["TrayIconStyle"]));
+            }
+            set {
+                this["TrayIconStyle"] = value;
             }
         }
         

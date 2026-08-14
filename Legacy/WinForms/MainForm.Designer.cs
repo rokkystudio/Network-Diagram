@@ -49,6 +49,10 @@ namespace NetworkDiagram
             this.mDiagramBox = new NetworkDiagram.DiagramBox();
             this.mBodySpacerPanel = new System.Windows.Forms.Panel();
             this.Panel = new NetworkDiagram.SurfacePanel();
+            this.mReceivedRateLabel = new System.Windows.Forms.Label();
+            this.mSentRateLabel = new System.Windows.Forms.Label();
+            this.mReceivedRateTitleLabel = new System.Windows.Forms.Label();
+            this.mSentRateTitleLabel = new System.Windows.Forms.Label();
             this.mReceivedTitleLabel = new System.Windows.Forms.Label();
             this.mSentTitleLabel = new System.Windows.Forms.Label();
             this.mReceivedSpeedLabel = new System.Windows.Forms.Label();
@@ -82,6 +86,7 @@ namespace NetworkDiagram
             this.mNotifyIcon.Text = "Network Diagram";
             this.mNotifyIcon.Visible = true;
             this.mNotifyIcon.DoubleClick += new System.EventHandler(this.NotifyIcon_DoubleClick);
+            this.mNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseClick);
             // 
             // mNotifyMenu
             // 
@@ -186,9 +191,7 @@ namespace NetworkDiagram
             // 
             // mTitleBarPanel
             // 
-            this.mTitleBarPanel.Controls.Add(this.mLanguageButton);
             this.mTitleBarPanel.Controls.Add(this.mSettingsButton);
-            this.mTitleBarPanel.Controls.Add(this.mThemeButton);
             this.mTitleBarPanel.Controls.Add(this.mCloseButton);
             this.mTitleBarPanel.Controls.Add(this.mWindowSubtitleLabel);
             this.mTitleBarPanel.Controls.Add(this.mWindowTitleLabel);
@@ -213,7 +216,7 @@ namespace NetworkDiagram
             // mSettingsButton
             // 
             this.mSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.mSettingsButton.Location = new System.Drawing.Point(274, 4);
+            this.mSettingsButton.Location = new System.Drawing.Point(322, 4);
             this.mSettingsButton.Name = "mSettingsButton";
             this.mSettingsButton.Size = new System.Drawing.Size(48, 48);
             this.mSettingsButton.TabIndex = 4;
@@ -291,10 +294,10 @@ namespace NetworkDiagram
             this.mPanelBottom.Controls.Add(this.mDiagramBox);
             this.mPanelBottom.CornerRadius = 0;
             this.mPanelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mPanelBottom.Location = new System.Drawing.Point(12, 120);
+            this.mPanelBottom.Location = new System.Drawing.Point(12, 82);
             this.mPanelBottom.Name = "mPanelBottom";
-            this.mPanelBottom.Padding = new System.Windows.Forms.Padding(16, 14, 16, 14);
-            this.mPanelBottom.Size = new System.Drawing.Size(394, 130);
+            this.mPanelBottom.Padding = new System.Windows.Forms.Padding(16, 2, 16, 12);
+            this.mPanelBottom.Size = new System.Drawing.Size(394, 168);
             this.mPanelBottom.TabIndex = 2;
             // 
             // mResizeGripPanel
@@ -322,13 +325,17 @@ namespace NetworkDiagram
             // mBodySpacerPanel
             // 
             this.mBodySpacerPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.mBodySpacerPanel.Location = new System.Drawing.Point(12, 108);
+            this.mBodySpacerPanel.Location = new System.Drawing.Point(12, 78);
             this.mBodySpacerPanel.Name = "mBodySpacerPanel";
-            this.mBodySpacerPanel.Size = new System.Drawing.Size(394, 12);
+            this.mBodySpacerPanel.Size = new System.Drawing.Size(394, 4);
             this.mBodySpacerPanel.TabIndex = 1;
             // 
             // Panel
             // 
+            this.Panel.Controls.Add(this.mReceivedRateLabel);
+            this.Panel.Controls.Add(this.mSentRateLabel);
+            this.Panel.Controls.Add(this.mReceivedRateTitleLabel);
+            this.Panel.Controls.Add(this.mSentRateTitleLabel);
             this.Panel.Controls.Add(this.mReceivedTitleLabel);
             this.Panel.Controls.Add(this.mSentTitleLabel);
             this.Panel.Controls.Add(this.mReceivedSpeedLabel);
@@ -338,45 +345,81 @@ namespace NetworkDiagram
             this.Panel.Dock = System.Windows.Forms.DockStyle.Top;
             this.Panel.Location = new System.Drawing.Point(12, 0);
             this.Panel.Name = "Panel";
-            this.Panel.Size = new System.Drawing.Size(394, 108);
+            this.Panel.Size = new System.Drawing.Size(394, 78);
             this.Panel.TabIndex = 0;
+            // 
+            // mReceivedRateLabel
+            // 
+            this.mReceivedRateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.mReceivedRateLabel.Location = new System.Drawing.Point(304, 57);
+            this.mReceivedRateLabel.Name = "mReceivedRateLabel";
+            this.mReceivedRateLabel.Size = new System.Drawing.Size(74, 18);
+            this.mReceivedRateLabel.TabIndex = 8;
+            this.mReceivedRateLabel.Text = "0 KB/s";
+            this.mReceivedRateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // mSentRateLabel
+            // 
+            this.mSentRateLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.mSentRateLabel.Location = new System.Drawing.Point(304, 39);
+            this.mSentRateLabel.Name = "mSentRateLabel";
+            this.mSentRateLabel.Size = new System.Drawing.Size(74, 18);
+            this.mSentRateLabel.TabIndex = 7;
+            this.mSentRateLabel.Text = "0 KB/s";
+            this.mSentRateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // mReceivedRateTitleLabel
+            // 
+            this.mReceivedRateTitleLabel.AutoSize = true;
+            this.mReceivedRateTitleLabel.Location = new System.Drawing.Point(208, 59);
+            this.mReceivedRateTitleLabel.Name = "mReceivedRateTitleLabel";
+            this.mReceivedRateTitleLabel.Size = new System.Drawing.Size(69, 15);
+            this.mReceivedRateTitleLabel.TabIndex = 6;
+            this.mReceivedRateTitleLabel.Text = "Down speed";
+            // 
+            // mSentRateTitleLabel
+            // 
+            this.mSentRateTitleLabel.AutoSize = true;
+            this.mSentRateTitleLabel.Location = new System.Drawing.Point(208, 41);
+            this.mSentRateTitleLabel.Name = "mSentRateTitleLabel";
+            this.mSentRateTitleLabel.Size = new System.Drawing.Size(53, 15);
+            this.mSentRateTitleLabel.TabIndex = 5;
+            this.mSentRateTitleLabel.Text = "Up speed";
             // 
             // mReceivedTitleLabel
             // 
             this.mReceivedTitleLabel.AutoSize = true;
-            this.mReceivedTitleLabel.Location = new System.Drawing.Point(16, 72);
+            this.mReceivedTitleLabel.Location = new System.Drawing.Point(16, 57);
             this.mReceivedTitleLabel.Name = "mReceivedTitleLabel";
             this.mReceivedTitleLabel.Size = new System.Drawing.Size(55, 15);
             this.mReceivedTitleLabel.TabIndex = 4;
-            this.mReceivedTitleLabel.Text = "Received";
+            this.mReceivedTitleLabel.Text = "Download";
             // 
             // mSentTitleLabel
             // 
             this.mSentTitleLabel.AutoSize = true;
-            this.mSentTitleLabel.Location = new System.Drawing.Point(16, 45);
+            this.mSentTitleLabel.Location = new System.Drawing.Point(16, 39);
             this.mSentTitleLabel.Name = "mSentTitleLabel";
-            this.mSentTitleLabel.Size = new System.Drawing.Size(28, 15);
+            this.mSentTitleLabel.Size = new System.Drawing.Size(43, 15);
             this.mSentTitleLabel.TabIndex = 3;
-            this.mSentTitleLabel.Text = "Sent";
+            this.mSentTitleLabel.Text = "Upload";
             // 
             // mReceivedSpeedLabel
             // 
-            this.mReceivedSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.mReceivedSpeedLabel.Location = new System.Drawing.Point(116, 68);
+            this.mReceivedSpeedLabel.Location = new System.Drawing.Point(110, 57);
             this.mReceivedSpeedLabel.Name = "mReceivedSpeedLabel";
-            this.mReceivedSpeedLabel.Size = new System.Drawing.Size(262, 24);
+            this.mReceivedSpeedLabel.Size = new System.Drawing.Size(84, 18);
             this.mReceivedSpeedLabel.TabIndex = 2;
             this.mReceivedSpeedLabel.Text = "0 KB";
             this.mReceivedSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // mSentSpeedLabel
             // 
-            this.mSentSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.mSentSpeedLabel.Location = new System.Drawing.Point(116, 41);
+            this.mSentSpeedLabel.Location = new System.Drawing.Point(110, 39);
             this.mSentSpeedLabel.Name = "mSentSpeedLabel";
-            this.mSentSpeedLabel.Size = new System.Drawing.Size(262, 24);
+            this.mSentSpeedLabel.Size = new System.Drawing.Size(84, 18);
             this.mSentSpeedLabel.TabIndex = 1;
             this.mSentSpeedLabel.Text = "0 KB";
             this.mSentSpeedLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -460,6 +503,10 @@ namespace NetworkDiagram
         private DiagramBox mDiagramBox;
         private System.Windows.Forms.Panel mBodySpacerPanel;
         private SurfacePanel Panel;
+        private System.Windows.Forms.Label mReceivedRateLabel;
+        private System.Windows.Forms.Label mSentRateLabel;
+        private System.Windows.Forms.Label mReceivedRateTitleLabel;
+        private System.Windows.Forms.Label mSentRateTitleLabel;
         private System.Windows.Forms.Label mReceivedTitleLabel;
         private System.Windows.Forms.Label mSentTitleLabel;
         private System.Windows.Forms.Label mReceivedSpeedLabel;

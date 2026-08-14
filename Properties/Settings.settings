@@ -11,6 +11,9 @@
     <Setting Name="WindowPosY" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
+    <Setting Name="MainWindowVisible" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
     <Setting Name="Opacity" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
@@ -19,6 +22,9 @@
     </Setting>
     <Setting Name="AlwaysOnTop" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TrayIconStyle" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="SentColor" Type="System.String" Scope="User">
       <Value Profile="(Default)">#F0D0F0</Value>
